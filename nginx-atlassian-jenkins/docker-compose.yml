@@ -1,0 +1,86 @@
+version: '3.4'
+
+x-base: &base-config
+  restart: always
+  networks:
+    - atlassiannet
+
+x-postgres: &postgres-base
+  <<: *base-config
+  image: bitnami/postgresql:11.1.0
+  environment:
+    - POSTGREQSL_PASSWORD=supersecret
+    - POSTGRESQL_USERNAME=atlassian
+    - POSTGRESQL_PASSWORD=password
+    - POSTGRESQL_DATABASE=database
+
+networks:
+  atlassiannet:
+    driver: bridge
+
+services:
+  proxy:
+    <<: *base-config
+    image: nginx:1.15.6
+    hostname: proxy
+    container_name: proxy
+    ports:
+      - "80:80"
+    links:
+      - jira
+      - confluence
+      - jenkins
+    environment:
+      - NGINX_HOST=mytestdomain.com
+      - NGINX_PORT=80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+
+  data-jira:
+    hostname: data-jira
+    container_name: data-jira
+    volumes:
+      - ./data-jira:/bitnami
+    <<: *postgres-base
+
+  data-confluence:
+    hostname: data-confluence
+    container_name: data-confluence
+    volumes:
+      - ./data-confluence:/bitnami
+    <<: *postgres-base
+
+  jira:
+    <<: *base-config
+    image: blacklabelops/jira:7.12.1
+    hostname: jira.mytestdomain.com
+    container_name: jira.mytestdomain.com
+    depends_on:
+      - data-jira
+    volumes:
+      - ./server-jira:/var/atlassian/jira
+
+  confluence:
+    <<: *base-config
+    image: blacklabelops/confluence:6.12.1
+    hostname: confluence.mytestdomain.com
+    container_name: confluence.mytestdomain.com
+    depends_on:
+      - data-confluence
+    volumes:
+      - ./server-confluence:/var/atlassian/confluence
+
+  jenkins:
+    <<: *base-config
+    image: jenkins/jenkins:2.151
+    hostname: jenkins.mytestdomain.com
+    container_name: jenkins.mytestdomain.com
+    volumes:
+      - ./server-jenkins:/var/jenkins_home
+
+volumes:
+  data-jira:
+  data-confluence:
+  server-jenkins:
+  server-jira:
+  server-confluence:

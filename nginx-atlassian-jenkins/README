@@ -1,0 +1,17 @@
+A Jira+Confluence+Jenkins setup with backend PostgreSQL databases, all
+hidden behind an NGINX reverse-proxy.
+
+To use, run pre-docker.sh and pay attention to the reminder about
+updating your /etc/hosts file. Then run "docker-compose up -d"
+
+If for some reason you need to modify the hostnames*, make sure you update:
+- in docker-compose.yml, both the hostname and container name for each
+  service you're renaming
+- in nginx.conf, the server_name for each service you're renaming
+- in /etc/hosts, the hostname for each service you're renaming
+
+.. you shouldn't need to rename anything else.
+
+
+
+* Only relevant for the server services for Jira, Jenkins & Confluence

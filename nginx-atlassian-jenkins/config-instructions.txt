@@ -1,0 +1,118 @@
+01. Run './pre-docker.sh' to create required folder structure
+02. Modify '/etc/hosts' to add the required DNS entries (as per reminder from 01)
+03. Run 'docker-compose up -d'
+
+
+################ JIRA ##########################
+
+04. In your browser, open a new tab and go to 'http://jira.mytestdomain.com'
+05. Click "I'll set it up myself", then 'Next'
+06. Select "My Own Database" ...
+        Database Type = PostgreSQL
+        Hostname = data-jira
+        Port = 5432
+        Database = database
+        Username = atlassian
+        Password = password
+        Schema = public
+        .. click Next, wait for it to complete (takes a few minutes!)
+        .. click Next again
+07. Paste in a valid license key, then click Next
+08. Fill in details to create an administrator account and click Next
+09. Configure Email Notifications = Later, click Finish
+10. Choose your language [English (UK)] and click Continue
+11. Select an avatar and click Next
+12. Choose how to populate your database (Create a new project -> Task Management)
+        .. click Next, then Select
+13. Choose a name for your database (TEST), click Submit
+
+
+################ CONFLUENCE ##########################
+
+14. In your browser, open a new tab and go to 'http://confluence.mytestdomain.com'
+15. Select 'Production Installation' and click Next, then Next
+16. Paste in a valid license key and click Next
+17. Select 'My own database' and click Next
+18. Enter the following configuration details:
+        Database Type = PostgreSQL
+        Setup type = Simple
+        Hostname = data-confluence
+        Port = 5432
+        Database = database
+        Username = atlassian
+        Password = password
+        .. click Next and wait for it to complete (takes a few minutes again)
+19. Choose which type of content to populate the database with (Empty Site)
+20. For now, click "Manage users and groups within Confluence"
+21. Fill in details to create your Administrator account, click Next, click Start
+        - make sure you use the same account details that you used for Jira
+22. Watch or skip the demo, then upload a photo or skip.
+23. Enter a Space name (TEST), click Continue
+24. Go through or skip the Tutorial
+
+
+################ JENKINS ##########################
+
+25. In your browser, open a new tab and go to http://jenkins.mytestdomain.com
+26. Open a command prompt and run "docker container list"
+        - find the line for "jenkins.mytestdomain.com" and copy the CONTAINER ID (3d97035aeb4c)
+27. Run 'docker container logs <CONTAINER_ID>', e.g. 'docker container logs 3d97035aeb4c'
+        - scroll back and find the initial password
+        - copy and paste it into your Jenkins browser tab's Administrator Password field
+        - click Continue
+28. Click Install suggested plugins
+        - they should install successfully but the clients web proxy server sometimes
+                seems to get in the way
+        - if this happens, open "http://updates.jenkins-ci.org" ..
+        - then close the tab, go back to the Jenkins one and click Retry
+29. Create an admin user, click 'Save and Continue'
+30. Make sure the Jenkins URL is set to "http://jenkins.mytestdomain.com" and click
+        "Save and Finish", followed by "Start using Jenkins"
+
+################ CONFIGURATION ##########################
+
+31. Need to look up the container IP addresses:
+      - Go to your command prompt and run 'docker network inspect jjc_atlassiannet'
+      - make a note of any of the IPv4 addresses (172.23.0.3/16)
+32. Return to your browser's JIRA tab
+33. Click the COG in the top right, select 'User management'
+34. Click 'Jira User server' on the left, click '+ Add application'
+        - Application name = Confluence
+        - password = Password
+        - IP Addresses = 172.23.0.*
+              .. use the one you noted in step 31; remove everything after the
+                  last '.' and replace it with '*'; this will then accept all
+                  IP addresses from that subnet
+        - click Save
+35. Switch to your Confluence tab and click the COG in the top right.
+        - select 'General configuration', then click 'User Directories'
+36. click 'Add Directory' and select 'Atlassian JIRA'; click Next
+        Server URL = http://jira.mytestdomain.com:8080/
+        Application name = Confluence
+        Application password = password
+        .. scroll down to JIRA Server Permissions
+        check 'Read/Write'
+        click 'Test settings', then 'Save and Test'
+        click the UP arrow next to JIRA Server to move it to the top of the list
+37. Test it by creating an account for Jenkins:
+        - select 'Users' on the left, then 'Add Users' across the top
+        - set everything as 'jenkins', click Add
+        - Switch to your Jira tab, click the COG in the top right
+        - select 'User management' and check that the Jenkins account is listed
+        - click the ellipsis ('...') to the right of the jenkins account
+        - choose 'Edit user groups' and add any additional groups it needs to be in
+38. Switch to your Jenkins tab and click 'Manage Jenkins' on the left
+        - click 'Manage Plugins', then 'Available'
+        - search for JIRA and tick 'JIRA' (ignore the partial matches)
+        - click 'Install without restart'
+39. Click 'Manage Jenkins', then 'Configure System'
+        - scroll down to the JIRA section and click ADD
+                URL = http://jira.mytestdomain.com:8080/
+                check 'Update Relevant JIRA Issues For All Build Results'
+                Find Credentials and click it's '<- Add' button, select Jenkins
+                        Username = jenkins (as per step 37)
+                        Password = jenkins
+                Now at Credentials, select jenkins/****** from the dropdown list
+                check 'Add timestamp to JIRA comments'
+                click 'Validate Settings', then Apply, then Save
+... now you can create some build jobs and link them to Jira
