@@ -9,7 +9,6 @@ x-postgres: &postgres-base
   <<: *base-config
   image: bitnami/postgresql:11.1.0
   environment:
-    - POSTGREQSL_PASSWORD=supersecret
     - POSTGRESQL_USERNAME=atlassian
     - POSTGRESQL_PASSWORD=password
     - POSTGRESQL_DATABASE=database
