@@ -5,7 +5,7 @@ import os
 import sys
 
 composefile = "docker-compose.yml"
-root_host = "ikea-test.com"
+root_host = "mytestdomain.com"
 volume_list = []
 host_list = []
 
