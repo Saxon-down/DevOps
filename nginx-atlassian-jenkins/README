@@ -1,8 +1,10 @@
 A Jira+Confluence+Jenkins setup with backend PostgreSQL databases, all
 hidden behind an NGINX reverse-proxy.
 
-To use, run pre-docker.sh and pay attention to the reminder about
-updating your /etc/hosts file. Then run "docker-compose up -d"
+To use, run "python3 initialise.py UP" - this will create all required folders,
+DNS entries (in /etc/hosts) and spin up docker. Alternatively
+run "python initialise.py DOWN" to tear it all down again (WARNING: this
+destroys any persistent data)
 
 If for some reason you need to modify the hostnames*, make sure you update:
 - in docker-compose.yml, both the hostname and container name for each
