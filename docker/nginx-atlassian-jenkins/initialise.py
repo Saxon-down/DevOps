@@ -99,10 +99,10 @@ if command == "UP" :
     print("Running docker-compose ...")
     os.system("docker-compose up -d")
 elif command == "DOWN" :
+    print("Stopping docker-compose ...")
+    os.system("docker-compose down")
     print("Cleaning up environment ...")
     rm_volumes(volume_list)
     rm_hosts(host_list)
-    print("Stopping docker-compose ...")
-    os.system("docker-compose down")
 else :
     print("Invalid argument: use UP or DOWN")
