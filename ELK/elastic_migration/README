@@ -1,0 +1,8 @@
+A script I've written for migrating data from one elasticsearch instance
+to another. It can also be used to migrate data to a new INDEX or TYPE
+(/INDEX/TYPE/record_id as of elasticsearch v6.5) within the same instance.
+
+Files:
+- elastic-migrator.py	: the main script
+- migratorcfg.py	    : several functions I use with other ELASTIC scripts
+- elastic-migrator.cfg	: config file in basic JSON format
