@@ -1,0 +1,2 @@
+A simple dockerfile and bash script for creating a Python
+hook environment for GitHub Enterprise.
