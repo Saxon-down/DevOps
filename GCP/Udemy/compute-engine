@@ -1,0 +1,48 @@
+# Setting gcloud defaults
+######################
+#### west1 (Belgium), west4 (Netherlands) and north1 (Finland)
+#### are cheapest as of 04/02/19, as per reddit post by a GCP
+#### Pricing Strategist
+######################
+gcloud config set compute/zone europe-west1-c
+gcloud config set compute/region eu-west1
+
+# Creating new VMs (Compute Engine)
+gcloud compute instances create udemy-test-vm
+gcloud compute instances list
+gcloud compute instances delete udemy-test-vm
+
+# Creating firewall rules
+gcloud compute firewall-rules create ...
+gcloud compute firewall-rules create default-allow-https --direction=INGRESS --priority=1000 --action=ALLOW --rules=tcp:443 --source-ranges=0.0.0.0/0 --target-tags=https-server
+# .. and then create a VM which uses (one of) them:
+gcloud compute instances create udemy-test-vm --tags=http-server,https-server
+# NEED TO USE the --tags flag and have it match on both the
+# firewall and VM creations
+gcloud compute ssh udemy-test-vm
+gcloud compute instances stop udemy-test-vm
+
+gcloud compute disks create my-new-disk --size=200GB
+# Attach and format disk
+gcloud compute instances attach-disk udemy-test-vm --disk my-new-disk
+gcloud compute ssh udemy-test-vm
+# These are all standard LINUX commands until ....
+    lsblk	# Check the disk was attached to the VM
+    sudo mkfs.ext4 -m 0 -F -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/[DEVICE_ID]
+    sudo mkdir -p /mnt/disks/my-new-disk
+    sudo mount -o discard,defaults /dev/[DEVICE_ID] /mnt/disks/my-new-disk
+    sudo chmod a+w /mnt/disks/my-new-disk
+    # Now add to /etc/fstab if you want it to start automatically
+# .... HERE
+
+
+# Clusters (Kubernetes)
+gcloud container clusters create my_first_cluster --num-nodes 1
+gcloud compute instances list	    # shows clusters as well as VMs
+kubectl run wordpress --image=tutum/wordpress --port=80
+kubectl get pods
+kubectl expose pod wordpress-7b67ccd874-qknpl --name=wordpress --type=LoadBalancer
+kubectl describe services wordpress
+kubectl delete pods wordpress-7b67ccd874-qknpl
+gcloud container clusters delete my-first-cluster
+
