@@ -1,9 +1,0 @@
-A simple dockerfile and bash script for creating a Python
-hook environment for GitHub Enterprise.
-
-I'm using this to run a pre-receive hook which requires SSL certificates, so
-they need to either be generatedi/downloaded (PEM file includes both 
-certificate and private key) or commented out in the dockerfile.
-
-My instance also requires specific python libraries, included in the 
-requirements.txt file
