@@ -1,0 +1,6 @@
+requests
+cryptography
+pyOpenSSL
+pyasn1
+ndg-httpsclient
+simplejson
